@@ -3,60 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>财报搜索器</title>
+    <title>Financial Reports Finder</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            line-height: 1.6;
+            background: #f5f7fb;
+            color: #1f2937;
         }
-        input, button {
-            padding: 10px;
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 48px 20px;
+        }
+
+        .hero {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e8f0ff;
+            color: #2457d6;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 999px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: 36px;
+        }
+
+        .subtitle {
+            margin: 0 0 28px;
+            color: #6b7280;
+            font-size: 17px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: 280px;
+            max-width: 100%;
+            padding: 14px 16px;
             font-size: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            outline: none;
+            background: #fff;
         }
-        input {
-            width: 240px;
+
+        input[type="text"]:focus {
+            border-color: #2457d6;
+            box-shadow: 0 0 0 3px rgba(36, 87, 214, 0.12);
         }
+
         button {
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #2457d6;
+            border: none;
+            border-radius: 10px;
             cursor: pointer;
         }
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 16px;
+
+        button:hover {
+            background: #1d4cc0;
         }
-        .error {
-            color: red;
+
+        .tips {
+            margin-top: 18px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .section-title {
+            margin: 32px 0 16px;
+            font-size: 24px;
+        }
+
+        .company-header {
+            background: white;
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-top: 28px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .company-name {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .company-meta {
+            margin-top: 8px;
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-top: 16px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .row {
+            margin: 8px 0;
+        }
+
+        .label {
             font-weight: bold;
+            color: #111827;
+        }
+
+        .link-btn {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #2457d6;
+            font-weight: bold;
+        }
+
+        .link-btn:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            background: #fff1f2;
+            color: #b42318;
+            border: 1px solid #fecdd3;
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-top: 24px;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 36px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .signature {
+            position: fixed;
+            right: 16px;
+            bottom: 12px;
+            font-size: 14px;
+            color: #6b7280;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 6px 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .hero {
+                padding: 28px 20px;
+            }
+
+            form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            input[type="text"],
+            button {
+                width: 100%;
+            }
+
+            .signature {
+                right: 10px;
+                bottom: 10px;
+                font-size: 12px;
+                padding: 5px 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>美国上市公司财报搜索器</h1>
-    <p>输入股票代码，例如：AAPL、MSFT、AMZN</p>
+    <div class="container">
+        <div class="hero">
+            <div class="badge">SEC Filing Search Tool</div>
+            <h1>Financial Reports Finder</h1>
+            <p class="subtitle">
+                Search recent SEC financial filings for U.S. listed companies by ticker symbol.
+            </p>
 
-    <form method="POST">
-        <input type="text" name="ticker" placeholder="请输入股票代码">
-        <button type="submit">搜索</button>
-    </form>
+            <form method="POST">
+                <input type="text" name="ticker" placeholder="Enter ticker, e.g. AAPL" required>
+                <button type="submit">Search</button>
+            </form>
 
-    {% if data %}
-        {% if data.error %}
-            <p class="error">{{ data.error }}</p>
-        {% else %}
-            <h2>{{ data.company }}（{{ data.ticker }}）</h2>
+            <div class="tips">
+                Try: AAPL, MSFT, AMZN, META, TSLA, GOOGL
+            </div>
+        </div>
 
-            {% for filing in data.filings %}
-                <div class="card">
-                    <p><strong>报告类型：</strong>{{ filing.form }}</p>
-                    <p><strong>披露日期：</strong>{{ filing.date }}</p>
-                    <p><a href="{{ filing.url }}" target="_blank">打开财报链接</a></p>
+        {% if data %}
+            {% if data.error %}
+                <div class="error">
+                    {{ data.error }}
                 </div>
-            {% endfor %}
+            {% else %}
+                <div class="company-header">
+                    <h2 class="company-name">{{ data.company }}</h2>
+                    <div class="company-meta">Ticker: {{ data.ticker }}</div>
+                </div>
+
+                <h3 class="section-title">Recent Filings</h3>
+
+                {% for filing in data.filings %}
+                    <div class="card">
+                        <div class="row"><span class="label">Form Type:</span> {{ filing.form }}</div>
+                        <div class="row"><span class="label">Filing Date:</span> {{ filing.date }}</div>
+                        <a class="link-btn" href="{{ filing.url }}" target="_blank">Open Filing</a>
+                    </div>
+                {% endfor %}
+            {% endif %}
         {% endif %}
-    {% endif %}
+
+        <div class="footer">
+            Built with Flask · Powered by SEC EDGAR data
+        </div>
+    </div>
+
+    <div class="signature">Created by KQ</div>
 </body>
 </html>
