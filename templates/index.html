@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>财报搜索器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        input {
+            width: 240px;
+        }
+        button {
+            cursor: pointer;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>美国上市公司财报搜索器</h1>
+    <p>输入股票代码，例如：AAPL、MSFT、AMZN</p>
+
+    <form method="POST">
+        <input type="text" name="ticker" placeholder="请输入股票代码">
+        <button type="submit">搜索</button>
+    </form>
+
+    {% if data %}
+        {% if data.error %}
+            <p class="error">{{ data.error }}</p>
+        {% else %}
+            <h2>{{ data.company }}（{{ data.ticker }}）</h2>
+
+            {% for filing in data.filings %}
+                <div class="card">
+                    <p><strong>报告类型：</strong>{{ filing.form }}</p>
+                    <p><strong>披露日期：</strong>{{ filing.date }}</p>
+                    <p><a href="{{ filing.url }}" target="_blank">打开财报链接</a></p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+</body>
+</html>
