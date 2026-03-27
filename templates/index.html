@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Reports Finder</title>
+    <title>美股上市公司财报查询工具</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,7 +17,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 980px;
             margin: 0 auto;
             padding: 48px 20px;
         }
@@ -43,13 +43,14 @@
 
         h1 {
             margin: 0 0 12px;
-            font-size: 36px;
+            font-size: 34px;
         }
 
         .subtitle {
             margin: 0 0 28px;
             color: #6b7280;
             font-size: 17px;
+            line-height: 1.7;
         }
 
         form {
@@ -61,7 +62,7 @@
         }
 
         input[type="text"] {
-            width: 280px;
+            width: 380px;
             max-width: 100%;
             padding: 14px 16px;
             font-size: 16px;
@@ -97,17 +98,44 @@
             color: #6b7280;
         }
 
-        .section-title {
-            margin: 32px 0 16px;
-            font-size: 24px;
-        }
-
-        .company-header {
+        .feature-box, .company-list-box, .company-header, .card, .empty {
             background: white;
             border-radius: 14px;
             padding: 20px 24px;
             margin-top: 28px;
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .company-list-title, .section-title {
+            margin: 0 0 14px;
+            font-size: 22px;
+        }
+
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .company-pill {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px 14px;
+            background: #fafafa;
+        }
+
+        .company-pill .ticker {
+            font-weight: bold;
+            color: #2457d6;
+            font-size: 15px;
+        }
+
+        .company-pill .name {
+            margin-top: 6px;
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         .company-name {
@@ -121,16 +149,18 @@
             font-size: 15px;
         }
 
+        .section-title {
+            margin: 30px 0 14px;
+            font-size: 22px;
+        }
+
         .card {
-            background: white;
-            border-radius: 14px;
-            padding: 20px 24px;
-            margin-top: 16px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+            margin-top: 14px;
         }
 
         .row {
             margin: 8px 0;
+            line-height: 1.7;
         }
 
         .label {
@@ -138,9 +168,13 @@
             color: #111827;
         }
 
+        .actions {
+            margin-top: 14px;
+        }
+
         .link-btn {
             display: inline-block;
-            margin-top: 10px;
+            margin-right: 16px;
             text-decoration: none;
             color: #2457d6;
             font-weight: bold;
@@ -158,6 +192,18 @@
             padding: 16px 18px;
             margin-top: 24px;
             font-weight: bold;
+        }
+
+        .empty {
+            color: #6b7280;
+            margin-top: 14px;
+        }
+
+        .feature-box ul {
+            margin: 10px 0 0;
+            padding-left: 20px;
+            line-height: 1.9;
+            color: #4b5563;
         }
 
         .footer {
@@ -210,19 +256,41 @@
 <body>
     <div class="container">
         <div class="hero">
-            <div class="badge">SEC Filing Search Tool</div>
-            <h1>Financial Reports Finder</h1>
+            <div class="badge">SEC 官方数据</div>
+            <h1>美股上市公司财报查询工具</h1>
             <p class="subtitle">
-                Search recent SEC financial filings for U.S. listed companies by ticker symbol.
+                支持通过股票代码或公司名称，快速查询美国上市公司近期在 SEC 披露的年报、季报等财报信息。
             </p>
 
             <form method="POST">
-                <input type="text" name="ticker" placeholder="Enter ticker, e.g. AAPL" required>
-                <button type="submit">Search</button>
+                <input type="text" name="keyword" placeholder="请输入股票代码或公司名称，例如：AAPL、Apple、Tesla" value="{{ keyword }}" required>
+                <button type="submit">立即查询</button>
             </form>
 
             <div class="tips">
-                Try: AAPL, MSFT, AMZN, META, TSLA, GOOGL
+                试试这些关键词：AAPL、Apple、MSFT、Microsoft、TSLA、Tesla、NVDA、NVIDIA
+            </div>
+        </div>
+
+        <div class="feature-box">
+            <h3 style="margin-top: 0;">工具说明</h3>
+            <ul>
+                <li>支持股票代码搜索，如：AAPL、MSFT、TSLA</li>
+                <li>支持公司名称搜索，如：Apple、Microsoft、Tesla</li>
+                <li>当前展示 SEC 官方披露的 10-K、10-Q、20-F、6-K 等财报信息</li>
+                <li>可直接打开原始财报链接和 SEC 明细页面</li>
+            </ul>
+        </div>
+
+        <div class="company-list-box">
+            <h3 class="company-list-title">支持查询的公司名单</h3>
+            <div class="company-grid">
+                {% for company in company_list %}
+                    <div class="company-pill">
+                        <div class="ticker">{{ company.ticker }}</div>
+                        <div class="name">{{ company.title }}</div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -234,26 +302,64 @@
             {% else %}
                 <div class="company-header">
                     <h2 class="company-name">{{ data.company }}</h2>
-                    <div class="company-meta">Ticker: {{ data.ticker }}</div>
+                    <div class="company-meta">股票代码：{{ data.ticker }}</div>
                 </div>
 
-                <h3 class="section-title">Recent Filings</h3>
+                <h3 class="section-title">年报 / Annual Reports</h3>
+                {% if data.annual_reports %}
+                    {% for filing in data.annual_reports %}
+                        <div class="card">
+                            <div class="row"><span class="label">报告类型：</span>{{ filing.form }}</div>
+                            <div class="row"><span class="label">披露日期：</span>{{ filing.date }}</div>
+                            <div class="actions">
+                                <a class="link-btn" href="{{ filing.url }}" target="_blank">打开财报原文</a>
+                                <a class="link-btn" href="{{ filing.detail_url }}" target="_blank">查看 SEC 明细页</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty">暂无可显示的年报数据。</div>
+                {% endif %}
 
-                {% for filing in data.filings %}
-                    <div class="card">
-                        <div class="row"><span class="label">Form Type:</span> {{ filing.form }}</div>
-                        <div class="row"><span class="label">Filing Date:</span> {{ filing.date }}</div>
-                        <a class="link-btn" href="{{ filing.url }}" target="_blank">Open Filing</a>
-                    </div>
-                {% endfor %}
+                <h3 class="section-title">季报 / Quarterly Reports</h3>
+                {% if data.quarterly_reports %}
+                    {% for filing in data.quarterly_reports %}
+                        <div class="card">
+                            <div class="row"><span class="label">报告类型：</span>{{ filing.form }}</div>
+                            <div class="row"><span class="label">披露日期：</span>{{ filing.date }}</div>
+                            <div class="actions">
+                                <a class="link-btn" href="{{ filing.url }}" target="_blank">打开财报原文</a>
+                                <a class="link-btn" href="{{ filing.detail_url }}" target="_blank">查看 SEC 明细页</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty">暂无可显示的季报数据。</div>
+                {% endif %}
+
+                <h3 class="section-title">其他财务披露 / Other Filings</h3>
+                {% if data.other_reports %}
+                    {% for filing in data.other_reports %}
+                        <div class="card">
+                            <div class="row"><span class="label">报告类型：</span>{{ filing.form }}</div>
+                            <div class="row"><span class="label">披露日期：</span>{{ filing.date }}</div>
+                            <div class="actions">
+                                <a class="link-btn" href="{{ filing.url }}" target="_blank">打开财报原文</a>
+                                <a class="link-btn" href="{{ filing.detail_url }}" target="_blank">查看 SEC 明细页</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty">暂无其他财务披露数据。</div>
+                {% endif %}
             {% endif %}
         {% endif %}
 
         <div class="footer">
-            Built with Flask · Powered by SEC EDGAR data
+            基于 Flask 构建 · 数据来源：SEC EDGAR
         </div>
     </div>
 
-    <div class="signature">Created by KQ</div>
+    <div class="signature">制作者：KQ</div>
 </body>
 </html>
